@@ -21,13 +21,13 @@ jobs:
 
       - name: Build the Docker image
         run: |
-          docker build -t ${{ OCIR_BASE_PATH }}/auth:$GITHUB_SHA ./auth
-          docker build -t ${{ OCIR_BASE_PATH }}/event:$GITHUB_SHA ./event
+          docker build -t ${{ secrets.OCIR_BASE_PATH }}/auth:$GITHUB_SHA ./auth
+          docker build -t ${{ secrets.OCIR_BASE_PATH }}/event:$GITHUB_SHA ./event
 
       - name: Push the Docker image to OCIR
         run: |
-          docker push ${{ OCIR_BASE_PATH }}/auth:$GITHUB_SHA
-          docker push ${{ OCIR_BASE_PATH }}/event:$GITHUB_SHA
+          docker push ${{ secrets.OCIR_BASE_PATH }}/auth:$GITHUB_SHA
+          docker push ${{ secrets.OCIR_BASE_PATH }}/event:$GITHUB_SHA
 
   deploy:
     name: deploy
@@ -46,8 +46,8 @@ jobs:
       - name: Update Kubernetes resources
         run: |
           cd deploy/kubernetes/overlays
-          kustomize edit set image ${{ OCIR_BASE_PATH }}/auth=${{ OCIR_BASE_PATH }}/auth:$GITHUB_SHA
-          kustomize edit set image ${{ OCIR_BASE_PATH }}/event=${{ OCIR_BASE_PATH }}/event:$GITHUB_SHA
+          kustomize edit set image ${{ secrets.OCIR_BASE_PATH }}/auth=${{ secrets.OCIR_BASE_PATH }}/auth:$GITHUB_SHA
+          kustomize edit set image ${{ secrets.OCIR_BASE_PATH }}/event=${{ secrets.OCIR_BASE_PATH }}/event:$GITHUB_SHA
           cat kustomization.yaml
 
       - name: Commit files
