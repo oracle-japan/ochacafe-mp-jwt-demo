@@ -1,0 +1,69 @@
+# Microprofile server properties
+server:
+  port: 8080
+  host: 0.0.0.0
+
+# Datasource properties
+javax:
+  sql:
+    DataSource:
+      AtpDataSource:
+        dataSourceClassName: oracle.jdbc.pool.OracleDataSource
+        dataSource:
+          # local development use
+          url: jdbc:oracle:thin:@sandbox_high?TNS_ADMIN=C:/Work/05_oci/wallets/Wallet_SANDBOX
+          user: sandbox
+          password: Passw0rd12345
+        connectionTimeout: 5000
+
+# Security config
+security:
+  # Set to true for production - if set to true, clear text passwords will cause failure
+  config:
+    require-encryption: false
+  properties:
+    # Identity Provider - IDCS
+    idcs-uri: <your-idcs-tenant-uri>
+    idcs-client-id: <your-idcs-client-id>
+    idcs-client-secret: <your-idcs-client-secret>
+    frontend-uri: <your-front-end>
+    proxy-host: 
+  providers:
+    - abac:
+      # Adds ABAC Provider - it does not require any configuration
+    - oidc:
+        client-id: ${security.properties.idcs-client-id}
+        client-secret: ${security.properties.idcs-client-secret}
+        identity-uri: ${security.properties.idcs-uri}
+        # A prefix used for custom scopes
+        scope-audience: https://ochacafe.season4
+        proxy-host: ${security.properties.proxy-host}
+        frontend-uri: ${security.properties.frontend-uri}
+        audience: https://idcs-f0017ddeef0241cfbd70e057c032ff44.identity.oraclecloud.com:443
+        server-type: idcs
+        idcs-roles: true
+        # support for "Authorization" header with bearer token
+        header-use: true
+    - idcs-role-mapper:
+        multitenant: false
+        oidc-config:
+          # we must repeat IDCS configuration, as in this case
+          # IDCS serves both as open ID connect authenticator and
+          # as a role mapper. Using minimal configuration here
+          client-id: ${security.properties.idcs-client-id}
+          client-secret: ${security.properties.idcs-client-secret}
+          identity-uri: ${security.properties.idcs-uri}
+
+# Change the following to true to enable the optional MicroProfile Metrics REST.request metrics
+metrics:
+  rest-request:
+    enabled: false
+
+# Application Performance Monitoring Tracing
+tracing:
+  enabled: true
+  name: Helidon APM Tracer
+  service: helidon-event
+  private-data-key: NDMCBGA6V3BJOKVFQC3SFDYQMX7SOZBP
+  data-upload-endpoint: https://aaaac6ptrolssaaaaaaaaaaewe.apm-agt.ap-tokyo-1.oci.oraclecloud.com
+  log-directory: /user/apm/log

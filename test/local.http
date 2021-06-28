@@ -1,0 +1,26 @@
+@localEndPoint = http://localhost:8080
+
+GET {{localEndPoint}}/event HTTP/1.1
+
+###
+GET {{localEndPoint}}/event/id/124819 HTTP/1.1
+
+###
+GET {{localEndPoint}}/event/season/3 HTTP/1.1
+
+###
+GET {{localEndPoint}}/event/title/明解 HTTP/1.1
+
+###
+POST {{localEndPoint}}/event HTTP/1.1
+Content-Type: application/json
+
+{
+    "title": "Kubernetesのオートスケーリング",
+    "season": "4",
+    "presenter": "n",
+    "eventDate": "2020-08-11"
+}
+
+###
+DELETE {{localEndPoint}}/event/id/216000 HTTP/1.1

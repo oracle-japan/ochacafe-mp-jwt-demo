@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth
+spec:
+  selector:
+    app: auth
+  ports:
+    - port: 7987
+      targetPort: 7987
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth
+spec:
+  selector:
+    matchLabels:
+      app: auth
+  template:
+    metadata:
+      labels:
+        app: auth
+    spec:
+      containers:
+        - name: auth
+          image: nrt.ocir.io/orasejapan/shukawam/auth
+          ports:
+            - name: api
+              containerPort: 7987
+          env:
+            - name: security.properties.idcs-uri
+              valueFrom:
+                secretKeyRef:
+                  name: idcs-secret
+                  key: idcs-uri
+            - name: security.properties.idcs-client-id
+              valueFrom:
+                secretKeyRef:
+                  name: idcs-secret
+                  key: idcs-client-id
+            - name: security.properties.idcs-client-secret
+              valueFrom:
+                secretKeyRef:
+                  name: idcs-secret
+                  key: idcs-client-secret
+            - name: security.properties.frontend-uri
+              valueFrom:
+                secretKeyRef:
+                  name: idcs-secret
+                  key: frontend-uri
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: api
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: api
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          imagePullPolicy: Always
+      imagePullSecrets:
+        - name: auth-secret

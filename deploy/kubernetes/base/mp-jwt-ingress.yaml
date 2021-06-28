@@ -1,0 +1,36 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-nginx
+  namespace: ochacafe
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+spec:
+  rules:
+  - http:
+      paths:
+      - backend:
+          service: 
+            name: auth
+            port:
+              number: 7987
+        path: "/auth"
+        pathType: Prefix
+  - http:
+      paths:
+      - backend:
+          service: 
+            name: auth
+            port:
+              number: 7987
+        path: "/oidc"
+        pathType: Prefix
+  - http:
+      paths:
+      - backend:
+          service:
+            name: event
+            port: 
+              number: 8080
+        path: "/event"
+        pathType: Prefix

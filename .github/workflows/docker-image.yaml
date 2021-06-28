@@ -1,0 +1,62 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    name: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Login to OCIR
+        uses: docker/login-action@v1
+        with:
+          registry: nrt.ocir.io
+          username: ${{ secrets.OICR_USERNAME }}
+          password: ${{ secrets.OCIR_PASSWORD }}
+
+      - name: Build the Docker image
+        run: |
+          docker build -t ${{ OCIR_BASE_PATH }}/auth:$GITHUB_SHA ./auth
+          docker build -t ${{ OCIR_BASE_PATH }}/event:$GITHUB_SHA ./event
+
+      - name: Push the Docker image to OCIR
+        run: |
+          docker push ${{ OCIR_BASE_PATH }}/auth:$GITHUB_SHA
+          docker push ${{ OCIR_BASE_PATH }}/event:$GITHUB_SHA
+
+  deploy:
+    name: deploy
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Kustomize
+        uses: imranismail/setup-kustomize@v1
+        with:
+          kustomize-version: "3.6.1"
+
+      - name: Update Kubernetes resources
+        run: |
+          cd deploy/kubernetes/overlays
+          kustomize edit set image ${{ OCIR_BASE_PATH }}/auth=${{ OCIR_BASE_PATH }}/auth:$GITHUB_SHA
+          kustomize edit set image ${{ OCIR_BASE_PATH }}/event=${{ OCIR_BASE_PATH }}/event:$GITHUB_SHA
+          cat kustomization.yaml
+
+      - name: Commit files
+        run: |
+          git config --local user.email "shukawam@gmail.com"
+          git config --local user.name "shukawam"
+          git commit -am "Bump docker tag"
+
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.PERSONAL_TOKEN }}

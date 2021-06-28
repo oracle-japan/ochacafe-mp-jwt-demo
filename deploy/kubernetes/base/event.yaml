@@ -1,0 +1,86 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: event
+spec:
+  selector:
+    app: event
+  ports:
+    - port: 8080
+      targetPort: 8080
+  type: ClusterIP
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: event
+spec:
+  selector:
+    matchLabels:
+      app: event
+  template:
+    metadata:
+      labels:
+        app: event
+    spec:
+      containers:
+        - name: event
+          image: nrt.ocir.io/orasejapan/shukawam/event
+          ports:
+            - name: api
+              containerPort: 8080
+          env:
+            - name: javax.sql.DataSource.AtpDataSource.dataSource.url
+              value: jdbc:oracle:thin:@sandbox_high?TNS_ADMIN=/database/credential
+            - name: javax.sql.DataSource.AtpDataSource.dataSource.user
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: user
+            - name: javax.sql.DataSource.AtpDataSource.dataSource.password
+              valueFrom:
+                secretKeyRef:
+                  name: db-secret
+                  key: password
+            - name: security.properties.idcs-uri
+              valueFrom:
+                secretKeyRef:
+                  name: idcs-secret
+                  key: idcs-uri
+            - name: security.properties.idcs-client-id
+              valueFrom:
+                secretKeyRef:
+                  name: idcs-secret
+                  key: idcs-client-id
+            - name: security.properties.idcs-client-secret
+              valueFrom:
+                secretKeyRef:
+                  name: idcs-secret
+                  key: idcs-client-secret
+            - name: security.properties.frontend-uri
+              valueFrom:
+                secretKeyRef:
+                  name: idcs-secret
+                  key: frontend-uri
+          volumeMounts:
+            - mountPath: /database/credential
+              name: credential
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: api
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: api
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          imagePullPolicy: Always
+      volumes:
+        - name: credential
+          configMap:
+            name: atp-wallet
+      imagePullSecrets:
+        - name: event-secret
