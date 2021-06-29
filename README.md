@@ -87,6 +87,7 @@
 ```
 
 本サンプルアプリケーションは、 [Helidon - Security Provider(OidcProvider, IDCSRoleMapper)](https://oracle-japan-oss-docs.github.io/helidon/docs/v2/#/mp/security/02_providers#_idcs_role_mapper) を用いてマイクロサービスの認証・認可を実現しています．`auth/src/resources/application.yaml`, `event/src/resources/application.yaml`に当該機能の設定が記載されています．以下の部分を自身の環境に合わせて修正してください．(環境変数に設定することを推奨します)
+下記以外のパラメーターに関しては [Helidon MP - Security Provider(OIDC Provider)](https://oracle-japan-oss-docs.github.io/helidon/docs/v2/#/mp/security/02_providers#_oidc_provider) をご参照ください．
 
 ```yaml
 # Security config
