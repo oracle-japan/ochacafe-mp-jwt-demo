@@ -62,6 +62,16 @@ spec:
                 secretKeyRef:
                   name: idcs-secret
                   key: frontend-uri
+            - name: tracing.private-data-key
+              valueFrom:
+                secretKeyRef:
+                  name: apm-secret
+                  key: c
+            - name: tracing.data-upload-endpoint
+              valueFrom:
+                secretKeyRef:
+                  name: apm-secret
+                  key: data-upload-endpoint
           volumeMounts:
             - mountPath: /database/credential
               name: credential
