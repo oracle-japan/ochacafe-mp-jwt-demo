@@ -1,5 +1,6 @@
 package me.shukawam.example.mp.event;
 
+import io.helidon.microprofile.cors.CrossOrigin;
 import io.helidon.security.annotations.Authenticated;
 
 import javax.annotation.security.RolesAllowed;
@@ -50,6 +51,7 @@ public class EventResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @CrossOrigin(allowMethods = {HttpMethod.POST})
     @Authenticated
     @RolesAllowed("Admin")
     public Event createEvent(CreateEventRequest createEventRequest) {

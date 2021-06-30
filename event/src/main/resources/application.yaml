@@ -67,9 +67,3 @@ tracing:
   private-data-key: NDMCBGA6V3BJOKVFQC3SFDYQMX7SOZBP
   data-upload-endpoint: https://aaaac6ptrolssaaaaaaaaaaewe.apm-agt.ap-tokyo-1.oci.oraclecloud.com
   log-directory: /user/apm/log
-
-# Support CORS
-cors:
-  paths:
-    - path-pattern: /event
-      allow-methods: ["GET", "HEAD", "OPTIONS", "POST", "DELETE"]

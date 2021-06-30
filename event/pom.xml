@@ -179,10 +179,6 @@
             <artifactId>osdt_core</artifactId>
             <version>${ojdbc.version}</version>
         </dependency>
-        <dependency>
-            <groupId>io.helidon.microprofile</groupId>
-            <artifactId>helidon-microprofile-cors</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
