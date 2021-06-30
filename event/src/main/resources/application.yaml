@@ -64,6 +64,6 @@ tracing:
   enabled: true
   name: Helidon APM Tracer
   service: helidon-event
-  private-data-key: <your-apm-private-data-key>
-  data-upload-endpoint: <your-apm-endpoint>
+  private-data-key: NDMCBGA6V3BJOKVFQC3SFDYQMX7SOZBP
+  data-upload-endpoint: https://aaaac6ptrolssaaaaaaaaaaewe.apm-agt.ap-tokyo-1.oci.oraclecloud.com
   log-directory: /user/apm/log
