@@ -22,6 +22,10 @@
         </repository>
     </repositories>
 
+    <properties>
+        <jackson.version>2.12.3</jackson.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>io.helidon.microprofile.bundles</groupId>
@@ -74,6 +78,19 @@
             <groupId>com.oracle.apm.agent.java</groupId>
             <artifactId>apm-java-agent-helidon</artifactId>
             <version>RELEASE</version>
+        </dependency>
+        <dependency>
+            <groupId>io.helidon.microprofile.rest-client</groupId>
+            <artifactId>helidon-microprofile-rest-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.helidon.microprofile</groupId>
+            <artifactId>helidon-microprofile-cors</artifactId>
         </dependency>
     </dependencies>
 
