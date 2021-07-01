@@ -49,8 +49,8 @@ public class AuthResource {
 
     @GET
     @Path("profile")
-//    @Authenticated
-//    @RolesAllowed({"Admin", "Guest"})
+    @Authenticated
+    @RolesAllowed({"Admin", "Guest"})
     @Produces(MediaType.APPLICATION_JSON)
     public UserProfile getUserProfile(@Context ContainerRequestContext containerRequestContext) {
         logger.info(containerRequestContext.getHeaderString("Authorization"));
