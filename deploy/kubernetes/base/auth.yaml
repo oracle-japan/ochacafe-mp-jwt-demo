@@ -54,7 +54,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: apm-secret
-                  key: c
+                  key: private-data-key
             - name: tracing.data-upload-endpoint
               valueFrom:
                 secretKeyRef:
