@@ -20,6 +20,12 @@
 │       │   │               └── mp
 │       │   │                   └── auth
 │       │   │                       ├── AuthResource.java [ユーザー認証エンドポイント定義]
+│       │   │                       ├── AuthService.java [認証関連サービスクラス]
+│       │   │                       ├── IdcsResource.java [MicroProfile - REST Client]
+│       │   │                       ├── data
+│       │   │                       │   └── UserProfile.java [OpenID Connect UserInfo endpoint response def.]
+│       │   │                       ├── log
+│       │   │                       │   └── LoggerFactory.java
 │       │   │                       └── package-info.java
 │       │   └── resources
 │       │       ├── META-INF
@@ -27,7 +33,7 @@
 │       │       │   ├── microprofile-config.properties
 │       │       │   └── native-image
 │       │       │       └── reflect-config.json
-│       │       ├── application.yaml [アプリケーションの設定ファイル(IdP URI etc.)]
+│       │       ├── application.yaml [アプリケーションの設定ファイル]
 │       │       └── logging.properties
 │       └── test
 │           └── java
@@ -47,46 +53,51 @@
 │       │   └── mp-jwt-ingress.yaml
 │       └── overlays
 │           └── kustomization.yaml
-└── event [認証・認可制御対象アプリケーション]
-    ├── Dockerfile
-    ├── README.md
-    ├── pom.xml
-    └── src
-        ├── main
-        │   ├── java
-        │   │   └── me
-        │   │       └── shukawam
-        │   │           └── example
-        │   │               └── mp
-        │   │                   └── event
-        │   │                       ├── CreateEventRequest.java
-        │   │                       ├── Event.java
-        │   │                       ├── EventResource.java [エンドポイント・アクセス制御定義]
-        │   │                       ├── EventService.java
-        │   │                       └── package-info.java
-        │   └── resources
-        │       ├── META-INF
-        │       │   ├── beans.xml
-        │       │   ├── init_script.sql
-        │       │   ├── microprofile-config.properties
-        │       │   ├── native-image
-        │       │   │   ├── native-image.properties
-        │       │   │   └── reflect-config.json
-        │       │   └── persistence.xml
-        │       ├── application.yaml [アプリケーション設定ファイル(IdP URI, Database connection settings)]
-        │       ├── hibernate.properties
-        │       └── logging.properties
-        └── test
-            └── java
-                └── me
-                    └── shukawam
-                        └── example
-                            └── mp
-                                └── event
-                                    └── MainTest.java
+├── event [認証・認可制御対象アプリケーション]
+│   ├── Dockerfile
+│   ├── README.md
+│   ├── pom.xml
+│   └── src
+│       ├── main
+│       │   ├── java
+│       │   │   └── me
+│       │   │       └── shukawam
+│       │   │           └── example
+│       │   │               └── mp
+│       │   │                   └── event
+│       │   │                       ├── CreateEventRequest.java
+│       │   │                       ├── Event.java
+│       │   │                       ├── EventResource.java [Eventサービスに対するエンドポイント定義]
+│       │   │                       ├── EventService.java [Event関連処理のサービスクラス]
+│       │   │                       ├── exception
+│       │   │                       │   ├── EventNotFoundException.java
+│       │   │                       │   └── EventNotFoundExceptionMapper.java
+│       │   │                       └── package-info.java
+│       │   └── resources
+│       │       ├── META-INF
+│       │       │   ├── beans.xml
+│       │       │   ├── init_script.sql
+│       │       │   ├── microprofile-config.properties
+│       │       │   ├── native-image
+│       │       │   │   ├── native-image.properties
+│       │       │   │   └── reflect-config.json
+│       │       │   └── persistence.xml
+│       │       ├── application.yaml [アプリケーションの設定ファイル]
+│       │       ├── hibernate.properties
+│       │       └── logging.properties
+│       └── test
+│           └── java
+│               └── me
+│                   └── shukawam
+│                       └── example
+│                           └── mp
+│                               └── event
+│                                   └── MainTest.java
+└── test
+    └── test.http [Simple e2e test for VSCode REST Client]
 ```
 
-本サンプルアプリケーションは、 [Helidon - Security Provider(OidcProvider, IDCSRoleMapper)](https://oracle-japan-oss-docs.github.io/helidon/docs/v2/#/mp/security/02_providers#_idcs_role_mapper) を用いてマイクロサービスの認証・認可を実現しています．`auth/src/resources/application.yaml`, `event/src/resources/application.yaml`に当該機能の設定が記載されています．以下の部分を自身の環境に合わせて修正してください．(環境変数に設定することを推奨します)
+本サンプルアプリケーションは、 [Helidon - Security Provider(OidcProvider, IDCSRoleMapper)](https://oracle-japan-oss-docs.github.io/helidon/docs/v2/#/mp/security/02_providers#_idcs_role_mapper) を用いてマイクロサービスの認証・認可を実現しています．`auth/src/resources/application.yaml`, `event/src/resources/application.yaml`に当該機能の設定が記載されています．以下の部分を自身の環境に合わせて修正してください．(直接ファイルを編集するのではなく、環境変数に設定することを推奨します)
 下記以外のパラメーターに関しては [Helidon MP - Security Provider(OIDC Provider)](https://oracle-japan-oss-docs.github.io/helidon/docs/v2/#/mp/security/02_providers#_oidc_provider) をご参照ください．
 
 ```yaml
@@ -102,11 +113,12 @@ security:
     idcs-client-secret: <your-idcs-client-secret>
     frontend-uri: <your-front-end>
     proxy-host:
+  # ...
 ```
 
 ## アクセス制御概要
 
-マイクロサービス (event) のエンドポイントに対して RBAC で制御をかけています．
+業務処理を担当するマイクロサービス (event) のエンドポイントに対して RBAC で制御をかけています．
 
 | Path                       | Role         |
 | -------------------------- | ------------ |
@@ -179,3 +191,17 @@ Connection: close
   "title": "Kubernetesのオートスケーリング"
 }
 ```
+
+## Appendix - IDCS の設定
+
+1. IDCS にログインし、"機密アプリケーション"を作成する
+2. クライアントを登録する
+   1. 許可する権限付与タイプとして以下を追加する
+      - クライアント資格証明
+      - JWT アサーション
+      - リフレッシュトークン
+      - 認可コード
+   2. HTTPS 以外の URL を許可にチェックを入れる(HTTPS であれば不要な設定です)
+   3. リダイレクト URL を`http://<your-host>:<your-port>/oidc/redirect`と設定する
+      - e.g. `http://localhost:7987/oidc/redirect`
+   4. クライアント・タイプは"機密"を選択する
