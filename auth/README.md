@@ -1,36 +1,45 @@
-# Helidon MP Bare
+# auth
 
-Minimal Helidon MP project suitable to start from scratch.
+Helidon MP application that uses SecurityProvider for login with IDCS.
 
 ## Build and run
 
 With JDK11+
+
 ```bash
-mvn package
-java -jar target/api-gateway.jar
+mvn package -DskipTests
+java -jar target/auth.jar
+```
+
+With Helidon CLI (dev mode)
+
+```bash
+helidon dev
 ```
 
 ## Exercise the application
 
-```
-curl -X GET http://localhost:8080/greet
-{"message":"Hello World!"}
+```bash
+# Login with OIDC via IDCS
+curl -X GET http://localhost:7987/auth/login
+# Call OIDC userinfo endpoint
+curl -X GET http://localhost:7987/auth/profile --header 'authorization: Bearer <access_token>'
 ```
 
 ## Try health and metrics
 
-```
-curl -s -X GET http://localhost:8080/health
+```bash
+curl -s -X GET http://localhost:7987/health
 {"outcome":"UP",...
 . . .
 
 # Prometheus Format
-curl -s -X GET http://localhost:8080/metrics
+curl -s -X GET http://localhost:7987/metrics
 # TYPE base:gc_g1_young_generation_count gauge
 . . .
 
 # JSON Format
-curl -H 'Accept: application/json' -X GET http://localhost:8080/metrics
+curl -H 'Accept: application/json' -X GET http://localhost:7987/metrics
 {"base":...
 . . .
 ```
