@@ -93,4 +93,4 @@ spec:
           configMap:
             name: atp-wallet
       imagePullSecrets:
-        - name: event-secret
+        - name: ochacafe-secret
