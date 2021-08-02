@@ -15,6 +15,7 @@ target/
 .factorypath
 .project
 .settings/
+bin/
 
 # APM
 apm-tracer-log/
