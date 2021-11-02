@@ -36,6 +36,9 @@ security:
         idcs-roles: true
         # support for "Authorization" header with bearer token
         header-use: true
+        # OIDC Logout support
+        logout-enabled: true
+        post-logout-uri: auth/loggedout
     - idcs-role-mapper:
         multitenant: false
         oidc-config:

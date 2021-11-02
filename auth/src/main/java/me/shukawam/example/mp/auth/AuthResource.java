@@ -48,6 +48,13 @@ public class AuthResource {
     }
 
     @GET
+    @Path("loggedout")
+    @Produces(MediaType.APPLICATION_JSON)
+    public JsonObject logout() {
+        return JSON.createObjectBuilder().add("message", "OIDC Logout Success!").build();
+    }
+
+    @GET
     @Path("profile")
     @Authenticated
     @RolesAllowed({"Admin", "Guest"})
