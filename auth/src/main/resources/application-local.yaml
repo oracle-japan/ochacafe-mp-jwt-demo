@@ -15,11 +15,11 @@ security:
     require-encryption: false
   properties:
     # Identity Provider - IDCS
-    idcs-uri: <your-idcs-tenant-uri>
-    idcs-client-id: <your-idcs-client-id>
-    idcs-client-secret: <your-idcs-client-secret>
-    frontend-uri: <your-front-end>
-    proxy-host: 
+    idcs-uri: https://idcs-f0017ddeef0241cfbd70e057c032ff44.identity.oraclecloud.com
+    idcs-client-id: 1d6278e65db64a549041302e5420b43f
+    idcs-client-secret: 788a6824-23cf-45cb-8f16-5504b95ad5d0
+    frontend-uri: http://localhost:7987
+    proxy-host:
   providers:
     - abac:
       # Adds ABAC Provider - it does not require any configuration
@@ -51,7 +51,7 @@ security:
 
 # Application Performance Monitoring Tracing
 tracing:
-  enabled: true
+  enabled: false
   name: Helidon APM Tracer
   service: helidon-security
   private-data-key: <your-apm-private-data-key>
