@@ -7,7 +7,7 @@
     <parent>
         <groupId>io.helidon.applications</groupId>
         <artifactId>helidon-mp</artifactId>
-        <version>2.3.3</version>
+        <version>2.4.0</version>
         <relativePath/>
     </parent>
     <groupId>me.shukawam</groupId>
@@ -26,7 +26,6 @@
     <properties>
         <ojdbc.version>19.6.0.0</ojdbc.version>
     </properties>
-
 
     <dependencies>
         <dependency>

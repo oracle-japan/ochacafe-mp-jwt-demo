@@ -1,0 +1,59 @@
+# Microprofile server properties
+server:
+  port: 7987
+  host: 0.0.0.0
+
+# Change the following to true to enable the optional MicroProfile Metrics REST.request metrics
+metrics:
+  rest-request:
+    enabled: false
+
+# Security config
+security:
+  # Set to true for production - if set to true, clear text passwords will cause failure
+  config:
+    require-encryption: false
+  properties:
+    # Identity Provider - IDCS
+    idcs-uri: https://idcs-f0017ddeef0241cfbd70e057c032ff44.identity.oraclecloud.com
+    idcs-client-id: 1d6278e65db64a549041302e5420b43f
+    idcs-client-secret: 788a6824-23cf-45cb-8f16-5504b95ad5d0
+    frontend-uri: http://localhost:7987
+    proxy-host:
+  providers:
+    - abac:
+      # Adds ABAC Provider - it does not require any configuration
+    - oidc:
+        client-id: ${security.properties.idcs-client-id}
+        client-secret: ${security.properties.idcs-client-secret}
+        identity-uri: ${security.properties.idcs-uri}
+        # A prefix used for custom scopes
+        scope-audience: https://ochacafe.season4
+        proxy-host: ${security.properties.proxy-host}
+        frontend-uri: ${security.properties.frontend-uri}
+        audience: https://idcs-f0017ddeef0241cfbd70e057c032ff44.identity.oraclecloud.com:443
+        server-type: idcs
+        idcs-roles: true
+        # support for "Authorization" header with bearer token
+        header-use: true
+        # OIDC Logout support
+        logout-enabled: true
+        post-logout-uri: auth/loggedout
+    - idcs-role-mapper:
+        multitenant: false
+        oidc-config:
+          # we must repeat IDCS configuration, as in this case
+          # IDCS serves both as open ID connect authenticator and
+          # as a role mapper. Using minimal configuration here
+          client-id: ${security.properties.idcs-client-id}
+          client-secret: ${security.properties.idcs-client-secret}
+          identity-uri: ${security.properties.idcs-uri}
+
+# Application Performance Monitoring Tracing
+tracing:
+  enabled: false
+  name: Helidon APM Tracer
+  service: helidon-security
+  private-data-key: <your-apm-private-data-key>
+  data-upload-endpoint: <your-apm-endpoint>
+  log-directory: /user/apm/log
